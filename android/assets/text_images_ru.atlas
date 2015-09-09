@@ -1,0 +1,13 @@
+
+text_images_ru.png
+size: 512,128
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Success
+  rotate: false
+  xy: 2, 2
+  size: 349, 72
+  orig: 349, 72
+  offset: 0, 0
+  index: -1

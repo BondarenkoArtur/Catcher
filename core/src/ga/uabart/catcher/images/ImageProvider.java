@@ -1,0 +1,65 @@
+package ga.uabart.catcher.images;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
+/**
+ * Created by Arthur on 9/9/2015.
+ */
+public class ImageProvider {
+    private int SCREEN_WIDTH = 800;
+    private int SCREEN_HEIGHT = 480;
+    private TextureAtlas atlas;
+    private TextureAtlas textAtlas;
+    private Texture mainBackground;
+    private String locale;
+
+    public void loadAtlas() {
+        atlas = new TextureAtlas(Gdx.files.internal("game.atlas"));
+        mainBackground = new Texture(Gdx.files.internal("background.png"));
+    }
+
+    public void loadLanguage(String locale) {
+        this.locale = locale;
+        if (locale.equals("ru")) {
+            Gdx.app.log(locale, "loaded");
+            textAtlas = new TextureAtlas(Gdx.files.internal("text_images_ru.atlas"));
+        }
+        else {
+            Gdx.app.log(locale, "loaded");
+            textAtlas  = new TextureAtlas(Gdx.files.internal("text_images.atlas"));
+        }
+    }
+
+    public void dispose(){
+        atlas.dispose();
+        textAtlas.dispose();
+        mainBackground.dispose();
+    }
+
+    public int getScreenWidth() {
+        return SCREEN_WIDTH;
+    }
+
+    public int getScreenHeight() {
+        return SCREEN_HEIGHT;
+    }
+
+    public Texture getMainBackground() {
+        return mainBackground;
+    }
+
+    public TextureRegion getFlagEn() {
+        return atlas.findRegion("FlagEn");
+    }
+
+    public TextureRegion getFlagRu() {
+        return atlas.findRegion("FlagRu");
+    }
+
+    public TextureRegion getFlagOverlay() {
+        return atlas.findRegion("FlagOverlay");
+    }
+}
