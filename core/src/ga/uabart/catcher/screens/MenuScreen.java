@@ -13,9 +13,9 @@ import ga.uabart.catcher.Catcher;
 import ga.uabart.catcher.images.ImageProvider;
 import ga.uabart.catcher.view.Button;
 
-public class LangScreen implements Screen, InputProcessor{
+public class MenuScreen implements Screen, InputProcessor{
 
-    private String TAG = LangScreen.class.getName();
+    private String TAG = MenuScreen.class.getName();
 
     private ImageProvider imageProvider;
 
@@ -24,10 +24,13 @@ public class LangScreen implements Screen, InputProcessor{
     private Button[] buttons;
 
     private Texture background;
+    private TextureRegion logo;
     private SpriteBatch batch;
     private Catcher game;
+    private int logoX;
+    private int logoY;
 
-    public LangScreen(Catcher game) {
+    public MenuScreen(Catcher game) {
         super();
         this.game = game;
     }
@@ -53,11 +56,6 @@ public class LangScreen implements Screen, InputProcessor{
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         Vector3 touchPos = new Vector3();
         touchPos.set(screenX, screenY, 0);
         camera.unproject(touchPos);
@@ -84,6 +82,11 @@ public class LangScreen implements Screen, InputProcessor{
     }
 
     @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
         return false;
     }
@@ -102,17 +105,23 @@ public class LangScreen implements Screen, InputProcessor{
     public void show() {
         imageProvider = game.getImageProvider();
         background = imageProvider.getMainBackground();
-        TextureRegion flagEn = imageProvider.getFlagEn();
-        TextureRegion flagRu = imageProvider.getFlagRu();
-        TextureRegion flagOverlay = imageProvider.getFlagOverlay();
+
         buttons = new Button[2];
-        buttons[0] = new Button(flagEn);
-        buttons[1] = new Button(flagRu);
+        TextureRegion buttonBg = imageProvider.getButton();
+        buttons[0] = new Button(buttonBg, imageProvider.getStart());
+        buttons[1] = new Button(buttonBg, imageProvider.getKids());
+
         camera = new OrthographicCamera();
         camera.setToOrtho(false, imageProvider.getScreenWidth(), imageProvider.getScreenHeight());
+
         batch = new SpriteBatch();
-        buttons[0].setPos(100, 200);
-        buttons[1].setPos(450, 200);
+
+        logo = imageProvider.getLogo();
+        logoX = (imageProvider.getScreenWidth() - logo.getRegionWidth()) / 2;
+        logoY = (imageProvider.getScreenHeight() - logo.getRegionHeight() - 10)-50;
+
+        buttons[0].setPos(275, 200);
+        buttons[1].setPos(275, 100);
 
         Gdx.input.setInputProcessor(this);
         Gdx.input.setCatchBackKey(true);
@@ -124,6 +133,7 @@ public class LangScreen implements Screen, InputProcessor{
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         batch.draw(background, 0, 0);
+        batch.draw(logo, logoX, logoY);
         for (Button button : buttons) {
             button.draw(batch);
         }

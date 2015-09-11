@@ -1,13 +1,27 @@
 
 text_images.png
-size: 256,64
+size: 512,128
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-Success
+KidsMode
   rotate: false
   xy: 2, 2
-  size: 225, 52
-  orig: 225, 52
+  size: 104, 55
+  orig: 104, 55
+  offset: 0, 0
+  index: -1
+Logo
+  rotate: false
+  xy: 2, 59
+  size: 167, 66
+  orig: 167, 66
+  offset: 0, 0
+  index: -1
+Start
+  rotate: false
+  xy: 171, 77
+  size: 183, 48
+  orig: 183, 48
   offset: 0, 0
   index: -1

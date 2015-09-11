@@ -1,13 +1,27 @@
 
 text_images_ru.png
-size: 512,128
+size: 256,256
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-Success
+KidsMode
+  rotate: false
+  xy: 2, 73
+  size: 189, 64
+  orig: 189, 64
+  offset: 0, 0
+  index: -1
+Logo
   rotate: false
   xy: 2, 2
-  size: 349, 72
-  orig: 349, 72
+  size: 124, 69
+  orig: 124, 69
+  offset: 0, 0
+  index: -1
+Start
+  rotate: false
+  xy: 2, 139
+  size: 250, 70
+  orig: 250, 70
   offset: 0, 0
   index: -1

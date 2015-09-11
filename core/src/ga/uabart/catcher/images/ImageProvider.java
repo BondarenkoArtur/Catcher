@@ -5,9 +5,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-/**
- * Created by Arthur on 9/9/2015.
- */
 public class ImageProvider {
     private int SCREEN_WIDTH = 800;
     private int SCREEN_HEIGHT = 480;
@@ -62,4 +59,22 @@ public class ImageProvider {
     public TextureRegion getFlagOverlay() {
         return atlas.findRegion("FlagOverlay");
     }
+
+    public TextureRegion getButton() {
+        return atlas.findRegion("Button");
+    }
+
+    public TextureRegion getStart() {
+        return textAtlas.findRegion("Start");
+    }
+
+    public TextureRegion getKids() {
+        return textAtlas.findRegion("KidsMode");
+    }
+
+    public TextureRegion getLogo() {
+        return textAtlas.findRegion("Logo");
+    }
+
+
 }
