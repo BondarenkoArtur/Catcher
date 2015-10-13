@@ -48,6 +48,10 @@ public class ImageProvider {
         return mainBackground;
     }
 
+    public TextureRegion getBall() {
+        return atlas.findRegion("Ball");
+    }
+
     public TextureRegion getFlagEn() {
         return atlas.findRegion("FlagEn");
     }
@@ -58,6 +62,14 @@ public class ImageProvider {
 
     public TextureRegion getFlagOverlay() {
         return atlas.findRegion("FlagOverlay");
+    }
+
+    public TextureRegion getYes() {
+        return atlas.findRegion("Yes");
+    }
+
+    public TextureRegion getNo() {
+        return atlas.findRegion("No");
     }
 
     public TextureRegion getButton() {
@@ -75,6 +87,5 @@ public class ImageProvider {
     public TextureRegion getLogo() {
         return textAtlas.findRegion("Logo");
     }
-
 
 }

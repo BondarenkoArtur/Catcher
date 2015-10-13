@@ -1,15 +1,20 @@
 package ga.uabart.catcher;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import ga.uabart.catcher.images.ImageProvider;
+import ga.uabart.catcher.screens.GameScreen;
 import ga.uabart.catcher.screens.LangScreen;
 import ga.uabart.catcher.screens.MenuScreen;
+import ga.uabart.catcher.sound.SoundManager;
 
 public class Catcher extends Game {
 
     private ImageProvider imageProvider;
     private LangScreen langScreen;
     private MenuScreen menuScreen;
+    private GameScreen gameScreen;
+    private SoundManager soundManager;
 
     public void gotoLangScreen() {
         setScreen(new LangScreen(this));
@@ -17,13 +22,18 @@ public class Catcher extends Game {
     public void gotoMenuScreen() {
         setScreen(new MenuScreen(this));
     }
+    public void gotoGameScreen() {
+        setScreen(new GameScreen(this));
+    }
 
     public ImageProvider getImageProvider() {
         return imageProvider;
     }
 
     public void loadLanguage(String locale){
+        long startTime = System.currentTimeMillis();
         imageProvider.loadLanguage(locale);
+        Gdx.app.log("Time", "Time elapsed: " + (System.currentTimeMillis() - startTime) + "ms");
     }
 
 	@Override
@@ -32,6 +42,7 @@ public class Catcher extends Game {
         imageProvider.loadAtlas();
         langScreen = new LangScreen(this);
         menuScreen = new MenuScreen(this);
+        soundManager = new SoundManager();
 
         gotoLangScreen();
 	}
@@ -40,5 +51,9 @@ public class Catcher extends Game {
     public void dispose() {
         imageProvider.dispose();
         langScreen.dispose();
+    }
+
+    public SoundManager getSoundManager() {
+        return soundManager;
     }
 }

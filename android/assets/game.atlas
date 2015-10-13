@@ -4,31 +4,52 @@ size: 1024,256
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+Ball
+  rotate: false
+  xy: 758, 176
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 Button
   rotate: false
-  xy: 2, 2
+  xy: 2, 36
   size: 250, 70
   orig: 250, 70
   offset: 0, 0
   index: -1
 FlagEn
   rotate: false
-  xy: 2, 74
+  xy: 2, 108
   size: 250, 132
   orig: 250, 132
   offset: 0, 0
   index: -1
 FlagOverlay
   rotate: false
-  xy: 254, 74
+  xy: 254, 108
   size: 250, 132
   orig: 250, 132
   offset: 0, 0
   index: -1
 FlagRu
   rotate: false
-  xy: 506, 74
+  xy: 506, 108
   size: 250, 132
   orig: 250, 132
+  offset: 0, 0
+  index: -1
+No
+  rotate: false
+  xy: 2, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+Yes
+  rotate: false
+  xy: 254, 74
+  size: 32, 32
+  orig: 32, 32
   offset: 0, 0
   index: -1

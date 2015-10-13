@@ -6,41 +6,43 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.Matrix4;
 import ga.uabart.catcher.Catcher;
 import ga.uabart.catcher.images.ImageProvider;
-import ga.uabart.catcher.view.Button;
+import ga.uabart.catcher.sound.SoundManager;
 
-public class MenuScreen implements Screen, InputProcessor{
+public class GameScreen implements Screen, InputProcessor {
 
-    private String TAG = MenuScreen.class.getName();
-
-    private ImageProvider imageProvider;
+    private SpriteBatch batch;
 
     private OrthographicCamera camera;
 
-    private Button[] buttons;
-
-    private Texture background;
-    private TextureRegion logo;
-    private SpriteBatch batch;
     private Catcher game;
-    private int logoX;
-    private int logoY;
 
-    public MenuScreen(Catcher game) {
+    private ImageProvider imageProvider;
+    private Texture background;
+    private TextureRegion isAccel;
+    private TextureRegion flag;
+    private TextureRegion ball;
+
+    private float startRot = 0;
+
+    private float startX = 0, startY = 0;
+
+    private BitmapFont font;
+
+    private SoundManager soundManager;
+
+    public GameScreen(Catcher game) {
         super();
         this.game = game;
     }
 
     @Override
     public boolean keyDown(int keycode) {
-        if(keycode == Input.Keys.BACK){
-            Gdx.app.exit();
-            return true;
-        }
         return false;
     }
 
@@ -56,27 +58,7 @@ public class MenuScreen implements Screen, InputProcessor{
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        Vector3 touchPos = new Vector3();
-        touchPos.set(screenX, screenY, 0);
-        camera.unproject(touchPos);
-
-        for(int i=0;i<buttons.length;i++) {
-            if (buttons[i].isPressed(touchPos)) {
-                Gdx.app.log(TAG, "Button " + (i+1) + " pressed");
-                switch (i) {
-                    case 0:
-                        game.gotoGameScreen();
-                        break;
-                    case 1:
-                        game.gotoLangScreen();
-                        break;
-                    default:
-                        Gdx.app.exit();
-                }
-                break;
-            }
-        }
-        return true;
+        return false;
     }
 
     @Override
@@ -103,23 +85,24 @@ public class MenuScreen implements Screen, InputProcessor{
     public void show() {
         imageProvider = game.getImageProvider();
         background = imageProvider.getMainBackground();
+        boolean available = Gdx.input.isPeripheralAvailable(Input.Peripheral.Accelerometer);
+        if (available) {
+            isAccel = imageProvider.getYes();
+        } else {
+            isAccel = imageProvider.getNo();
+        }
+        flag = imageProvider.getFlagEn();
+        ball = imageProvider.getBall();
 
-        buttons = new Button[2];
-        TextureRegion buttonBg = imageProvider.getButton();
-        buttons[0] = new Button(buttonBg, imageProvider.getStart());
-        buttons[1] = new Button(buttonBg, imageProvider.getKids());
+        font = new BitmapFont(Gdx.files.internal("fonts/poetsen.fnt"),
+                Gdx.files.internal("fonts/poetsen.png"), false);
+
+        soundManager = game.getSoundManager();
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, imageProvider.getScreenWidth(), imageProvider.getScreenHeight());
 
         batch = new SpriteBatch();
-
-        logo = imageProvider.getLogo();
-        logoX = (imageProvider.getScreenWidth() - logo.getRegionWidth()) / 2;
-        logoY = (imageProvider.getScreenHeight() - logo.getRegionHeight() - 10)-50;
-
-        buttons[0].setPos(275, 200);
-        buttons[1].setPos(275, 100);
 
         Gdx.input.setInputProcessor(this);
         Gdx.input.setCatchBackKey(true);
@@ -131,11 +114,29 @@ public class MenuScreen implements Screen, InputProcessor{
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         batch.draw(background, 0, 0);
-        batch.draw(logo, logoX, logoY);
-        for (Button button : buttons) {
-            button.draw(batch);
-        }
+        batch.draw(isAccel, 50, 50);
+        Matrix4 matrix = new Matrix4();
+        Gdx.input.getRotationMatrix(matrix.val);
+        float accelX = Gdx.input.getAccelerometerX();
+        float accelY = Gdx.input.getAccelerometerY();
+        float accelZ = Gdx.input.getAccelerometerZ();
+
+        float movementRot = (accelY - startRot) * 0.1f + startRot;
+
+        float movementX = startX + accelY * 0.5f;
+        float movementY = startY - accelX * 0.5f;
+        if (movementX > 800) movementX = 800;
+        if (movementX < 0) movementX = 0;
+        if (movementY > 480) movementY = 480;
+        if (movementY < 0) movementY = 0;
+        batch.draw(ball, movementX, movementY);
+
+        batch.draw(flag, 300, 200, 250, 132, 250, 132, 1, 1, movementRot * 9.5f);
+        font.draw(batch, "XYZ:" + accelX + "|" + accelY + "|" + accelZ, 5, 470);
         batch.end();
+        startRot = movementRot;
+        startX = movementX;
+        startY = movementY;
     }
 
     @Override
@@ -160,8 +161,6 @@ public class MenuScreen implements Screen, InputProcessor{
 
     @Override
     public void dispose() {
-        if (batch != null) {
-            batch.dispose();
-        }
+
     }
 }
