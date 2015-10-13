@@ -31,9 +31,12 @@ public class ImageProvider {
     }
 
     public void dispose(){
-        atlas.dispose();
-        textAtlas.dispose();
-        mainBackground.dispose();
+        if (atlas != null)
+            atlas.dispose();
+        if (textAtlas != null)
+            textAtlas.dispose();
+        if (mainBackground != null)
+            mainBackground.dispose();
     }
 
     public int getScreenWidth() {

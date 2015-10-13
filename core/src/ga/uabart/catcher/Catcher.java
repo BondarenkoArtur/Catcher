@@ -6,6 +6,7 @@ import ga.uabart.catcher.images.ImageProvider;
 import ga.uabart.catcher.screens.GameScreen;
 import ga.uabart.catcher.screens.LangScreen;
 import ga.uabart.catcher.screens.MenuScreen;
+import ga.uabart.catcher.screens.ServerScreen;
 import ga.uabart.catcher.sound.SoundManager;
 
 public class Catcher extends Game {
@@ -14,13 +15,18 @@ public class Catcher extends Game {
     private LangScreen langScreen;
     private MenuScreen menuScreen;
     private GameScreen gameScreen;
+    private ServerScreen serverScreen;
     private SoundManager soundManager;
+
 
     public void gotoLangScreen() {
         setScreen(new LangScreen(this));
     }
     public void gotoMenuScreen() {
         setScreen(new MenuScreen(this));
+    }
+    public void gotoServerScreen() {
+        setScreen(new ServerScreen(this));
     }
     public void gotoGameScreen() {
         setScreen(new GameScreen(this));

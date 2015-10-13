@@ -6,16 +6,26 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
+import com.esotericsoftware.kryonet.Server;
 import ga.uabart.catcher.Catcher;
 import ga.uabart.catcher.images.ImageProvider;
+import ga.uabart.catcher.network.SomeRequest;
+import ga.uabart.catcher.network.SomeResponse;
 import ga.uabart.catcher.view.Button;
 
-public class MenuScreen implements Screen, InputProcessor{
+import java.io.IOException;
 
-    private String TAG = MenuScreen.class.getName();
+public class ServerScreen implements Screen, InputProcessor{
+
+    private String TAG = ServerScreen.class.getName();
 
     private ImageProvider imageProvider;
 
@@ -23,14 +33,17 @@ public class MenuScreen implements Screen, InputProcessor{
 
     private Button[] buttons;
 
+    private BitmapFont font;
+
+    private String message = "Do something already!";
+
     private Texture background;
-    private TextureRegion logo;
     private SpriteBatch batch;
     private Catcher game;
     private int logoX;
     private int logoY;
 
-    public MenuScreen(Catcher game) {
+    public ServerScreen(Catcher game) {
         super();
         this.game = game;
     }
@@ -65,10 +78,59 @@ public class MenuScreen implements Screen, InputProcessor{
                 Gdx.app.log(TAG, "Button " + (i+1) + " pressed");
                 switch (i) {
                     case 0:
-                        game.gotoGameScreen();
+                        Server server = new Server();
+                        Kryo kryoServer = server.getKryo();
+                        kryoServer.register(SomeRequest.class);
+                        kryoServer.register(SomeResponse.class);
+                        server.start();
+                        try {
+                            server.bind(54555, 54777);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        message = "Server started 54555 54777";
+                        server.addListener(new Listener() {
+                            public void received (Connection connection, Object object) {
+                                if (object instanceof SomeRequest) {
+                                    SomeRequest request = (SomeRequest)object;
+                                    System.out.println(request.text);
+                                    message += "\n" + request.text;
+
+                                    SomeResponse response = new SomeResponse();
+                                    response.text = "\nThanks";
+                                    connection.sendTCP(response);
+                                }
+                            }
+                        });
                         break;
                     case 1:
-                        game.gotoServerScreen();
+                        Client client = new Client();
+                        Kryo kryoClient = client.getKryo();
+                        kryoClient.register(SomeRequest.class);
+                        kryoClient.register(SomeResponse.class);
+                        client.start();
+                        try {
+                            client.connect(5000, "10.42.0.12", 54555, 54777);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        message = "Client 10.42.0.12 54555 54777";
+
+                        SomeRequest request = new SomeRequest();
+                        request.text = "\nHere is the request";
+                        client.sendTCP(request);
+
+                        client.addListener(new Listener() {
+                            public void received (Connection connection, Object object) {
+                                if (object instanceof SomeResponse) {
+                                    SomeResponse response = (SomeResponse)object;
+                                    System.out.println(response.text);
+                                    message += response.text;
+                                }
+                            }
+                        });
+
+
                         break;
                     default:
                         Gdx.app.exit();
@@ -104,6 +166,9 @@ public class MenuScreen implements Screen, InputProcessor{
         imageProvider = game.getImageProvider();
         background = imageProvider.getMainBackground();
 
+        font = new BitmapFont(Gdx.files.internal("fonts/Mono.fnt"),
+                Gdx.files.internal("fonts/Mono.png"), false);
+
         buttons = new Button[2];
         TextureRegion buttonBg = imageProvider.getButton();
         buttons[0] = new Button(buttonBg, imageProvider.getStart());
@@ -113,10 +178,6 @@ public class MenuScreen implements Screen, InputProcessor{
         camera.setToOrtho(false, imageProvider.getScreenWidth(), imageProvider.getScreenHeight());
 
         batch = new SpriteBatch();
-
-        logo = imageProvider.getLogo();
-        logoX = (imageProvider.getScreenWidth() - logo.getRegionWidth()) / 2;
-        logoY = (imageProvider.getScreenHeight() - logo.getRegionHeight() - 10)-50;
 
         buttons[0].setPos(275, 200);
         buttons[1].setPos(275, 100);
@@ -131,10 +192,10 @@ public class MenuScreen implements Screen, InputProcessor{
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         batch.draw(background, 0, 0);
-        batch.draw(logo, logoX, logoY);
         for (Button button : buttons) {
             button.draw(batch);
         }
+        font.draw(batch, message, 0, 480);
         batch.end();
     }
 
